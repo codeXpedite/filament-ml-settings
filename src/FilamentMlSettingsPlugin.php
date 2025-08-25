@@ -5,6 +5,7 @@ namespace CodeXpedite\FilamentMlSettings;
 use CodeXpedite\FilamentMlSettings\Resources\SettingResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Illuminate\Support\Facades\Schema;
 
 class FilamentMlSettingsPlugin implements Plugin
 {
@@ -52,11 +53,22 @@ class FilamentMlSettingsPlugin implements Plugin
         ];
         
         // Register pages based on available settings groups
-        $availableGroups = \CodeXpedite\FilamentMlSettings\Models\Setting::distinct('group')
-            ->pluck('group')
-            ->filter()
-            ->values()
-            ->toArray();
+        try {
+            // Check if database connection exists and table is available
+            if (Schema::hasTable('settings')) {
+                $availableGroups = \CodeXpedite\FilamentMlSettings\Models\Setting::distinct('group')
+                    ->pluck('group')
+                    ->filter()
+                    ->values()
+                    ->toArray();
+            } else {
+                // If table doesn't exist, register all default groups
+                $availableGroups = ['general', 'site', 'mail', 'api', 'reading', 'social'];
+            }
+        } catch (\Exception $e) {
+            // If any database error occurs, register all pages as fallback
+            $availableGroups = ['general', 'site', 'mail', 'api', 'reading', 'social'];
+        }
         
         $pagesToRegister = [];
         foreach ($settingsPages as $pageClass) {
