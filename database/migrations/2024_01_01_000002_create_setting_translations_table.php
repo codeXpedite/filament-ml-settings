@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('locale')->index();
             $table->text('value')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['setting_id', 'locale']);
         });
     }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_translatable')->default(false);
             $table->integer('order')->default(0);
             $table->timestamps();
-            
+
             $table->index(['group', 'tab']);
             $table->index('order');
         });

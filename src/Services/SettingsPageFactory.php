@@ -2,8 +2,6 @@
 
 namespace CodeXpedite\FilamentMlSettings\Services;
 
-use CodeXpedite\FilamentMlSettings\Pages\BaseGroupSettings;
-
 /**
  * Factory for creating dynamic settings pages
  * This allows creating settings pages without pre-defining classes
@@ -15,23 +13,23 @@ class SettingsPageFactory
      */
     public static function createForGroup(
         string $group,
-        string $label = null,
-        string $icon = null,
+        ?string $label = null,
+        ?string $icon = null,
         int $sort = 99
     ): string {
-        $className = 'DynamicSettings' . ucfirst($group);
-        $fullClassName = 'CodeXpedite\\FilamentMlSettings\\Pages\\Dynamic\\' . $className;
-        
+        $className = 'DynamicSettings'.ucfirst($group);
+        $fullClassName = 'CodeXpedite\\FilamentMlSettings\\Pages\\Dynamic\\'.$className;
+
         // If class already exists, return it
         if (class_exists($fullClassName)) {
             return $fullClassName;
         }
-        
+
         // Create the class dynamically
         $label = $label ?? ucfirst(str_replace(['_', '-'], ' ', $group));
         $icon = $icon ?? 'heroicon-o-cog';
-        $slug = 'manage-settings/' . $group;
-        
+        $slug = 'manage-settings/'.$group;
+
         // Define the class using eval (use with caution)
         $classDefinition = "
         namespace CodeXpedite\\FilamentMlSettings\\Pages\\Dynamic;
@@ -53,19 +51,19 @@ class SettingsPageFactory
             }
         }
         ";
-        
+
         eval($classDefinition);
-        
+
         return $fullClassName;
     }
-    
+
     /**
      * Register multiple dynamic groups at once
      */
     public static function registerGroups(array $groups): array
     {
         $classes = [];
-        
+
         foreach ($groups as $group => $config) {
             if (is_string($config)) {
                 // Simple format: ['payment' => 'Payment']
@@ -80,7 +78,7 @@ class SettingsPageFactory
                 );
             }
         }
-        
+
         return $classes;
     }
 }

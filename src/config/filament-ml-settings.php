@@ -15,7 +15,7 @@ return [
         'ttl' => 3600, // 1 hour
         'prefix' => 'settings',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Default Groups
@@ -35,7 +35,7 @@ return [
         'cache' => 'Cache Settings',
         'security' => 'Security',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Field Types
@@ -58,7 +58,7 @@ return [
         'json' => 'Key-Value (JSON)',
         'richtext' => 'Rich Text Editor',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Seeder Configuration
@@ -71,7 +71,7 @@ return [
         'path' => database_path('seeders'),
         'namespace' => 'Database\\Seeders',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Navigation Configuration

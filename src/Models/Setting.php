@@ -51,26 +51,28 @@ class Setting extends Model implements TranslatableContract
 
     public function getValueAttribute($value)
     {
-        if (!$this->is_translatable) {
+        if (! $this->is_translatable) {
             return $this->castValue($this->attributes['value'] ?? $this->default_value);
         }
 
         $translatedValue = $this->getTranslation()?->value;
+
         return $this->castValue($translatedValue ?? $this->default_value);
     }
 
     public function setValueAttribute($value)
     {
-        if (!$this->is_translatable) {
+        if (! $this->is_translatable) {
             $this->attributes['value'] = $this->prepareValueForStorage($value);
         }
     }
 
     public function setValue($value, $locale = null)
     {
-        if (!$this->is_translatable) {
+        if (! $this->is_translatable) {
             $this->value = $value;
             $this->save();
+
             return;
         }
 
@@ -79,7 +81,7 @@ class Setting extends Model implements TranslatableContract
         } else {
             $this->value = $this->prepareValueForStorage($value);
         }
-        
+
         $this->save();
     }
 
@@ -134,7 +136,7 @@ class Setting extends Model implements TranslatableContract
 
     public function getValidationRulesAttribute()
     {
-        if (!$this->rules) {
+        if (! $this->rules) {
             return [];
         }
 
@@ -158,7 +160,7 @@ class Setting extends Model implements TranslatableContract
             return static::where('key', $key)->first();
         });
 
-        if (!$setting) {
+        if (! $setting) {
             return $default;
         }
 
@@ -172,13 +174,13 @@ class Setting extends Model implements TranslatableContract
     public static function setSetting($key, $value, $locale = null)
     {
         $setting = static::where('key', $key)->first();
-        
-        if (!$setting) {
+
+        if (! $setting) {
             return false;
         }
 
         $setting->setValue($value, $locale);
-        
+
         return true;
     }
 }

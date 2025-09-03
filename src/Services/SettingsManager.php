@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Cache;
 class SettingsManager
 {
     protected $cache = [];
+
     protected $cacheEnabled = true;
+
     protected $cacheTime = 3600;
 
     public function get($key, $default = null, $locale = null)
@@ -18,7 +20,7 @@ class SettingsManager
         }
 
         $value = Setting::getSetting($key, $default, $locale);
-        
+
         if ($this->cacheEnabled) {
             $this->cache[$key] = $value;
         }
@@ -29,7 +31,7 @@ class SettingsManager
     public function set($key, $value, $locale = null)
     {
         $result = Setting::setSetting($key, $value, $locale);
-        
+
         if ($result && $this->cacheEnabled) {
             unset($this->cache[$key]);
             Cache::forget("settings.{$key}");
@@ -47,20 +49,20 @@ class SettingsManager
     {
         unset($this->cache[$key]);
         Cache::forget("settings.{$key}");
-        
+
         return Setting::where('key', $key)->delete();
     }
 
     public function all($group = null, $locale = null)
     {
         $query = Setting::with('translations');
-        
+
         if ($group) {
             $query->where('group', $group);
         }
 
         $settings = $query->get();
-        
+
         $result = [];
         foreach ($settings as $setting) {
             if ($locale && $setting->is_translatable) {
@@ -86,13 +88,13 @@ class SettingsManager
     public function update($key, array $data)
     {
         $setting = Setting::where('key', $key)->first();
-        
-        if (!$setting) {
+
+        if (! $setting) {
             return false;
         }
 
         $setting->update($data);
-        
+
         if ($this->cacheEnabled) {
             unset($this->cache[$key]);
             Cache::forget("settings.{$key}");
@@ -115,18 +117,21 @@ class SettingsManager
     public function disableCache()
     {
         $this->cacheEnabled = false;
+
         return $this;
     }
 
     public function enableCache()
     {
         $this->cacheEnabled = true;
+
         return $this;
     }
 
     public function setCacheTime($seconds)
     {
         $this->cacheTime = $seconds;
+
         return $this;
     }
 }

@@ -10,8 +10,11 @@ use Illuminate\Support\Facades\Schema;
 class FilamentMlSettingsPlugin implements Plugin
 {
     protected bool $hasSettingResource = true;
+
     protected bool $hasManageSettingsPage = true;
+
     protected bool $hideSettingResourceInProduction = true;
+
     protected array $customGroups = [];
 
     public function getId(): string
@@ -24,9 +27,9 @@ class FilamentMlSettingsPlugin implements Plugin
         // Register SettingResource based on configuration
         if ($this->hasSettingResource) {
             // Check if we should hide in production
-            $shouldRegister = !$this->hideSettingResourceInProduction || 
+            $shouldRegister = ! $this->hideSettingResourceInProduction ||
                               app()->environment(['local', 'development']);
-            
+
             if ($shouldRegister) {
                 $panel->resources([
                     SettingResource::class,
@@ -39,7 +42,7 @@ class FilamentMlSettingsPlugin implements Plugin
             $this->registerSettingsPages($panel);
         }
     }
-    
+
     protected function registerSettingsPages(Panel $panel): void
     {
         // Define available settings pages
@@ -51,7 +54,7 @@ class FilamentMlSettingsPlugin implements Plugin
             \CodeXpedite\FilamentMlSettings\Pages\Groups\ReadingSettings::class,
             \CodeXpedite\FilamentMlSettings\Pages\Groups\SocialSettings::class,
         ];
-        
+
         // Register pages based on available settings groups
         try {
             // Check if database connection exists and table is available
@@ -69,20 +72,20 @@ class FilamentMlSettingsPlugin implements Plugin
             // If any database error occurs, register all pages as fallback
             $availableGroups = ['general', 'site', 'mail', 'api', 'reading', 'social'];
         }
-        
+
         $pagesToRegister = [];
         foreach ($settingsPages as $pageClass) {
             // Use reflection to check if this page should be registered
             try {
                 $reflection = new \ReflectionClass($pageClass);
                 $instance = $reflection->newInstanceWithoutConstructor();
-                
+
                 // Check if getSettingsGroup method exists
                 if ($reflection->hasMethod('getSettingsGroup')) {
                     $method = $reflection->getMethod('getSettingsGroup');
                     $method->setAccessible(true);
                     $group = $method->invoke($instance);
-                    
+
                     // Only register if this group has settings
                     if ($group && in_array($group, $availableGroups)) {
                         $pagesToRegister[] = $pageClass;
@@ -93,9 +96,9 @@ class FilamentMlSettingsPlugin implements Plugin
                 continue;
             }
         }
-        
+
         // Register the filtered pages
-        if (!empty($pagesToRegister)) {
+        if (! empty($pagesToRegister)) {
             $panel->pages($pagesToRegister);
         }
     }
@@ -113,24 +116,28 @@ class FilamentMlSettingsPlugin implements Plugin
     public function settingResource(bool $condition = true): static
     {
         $this->hasSettingResource = $condition;
+
         return $this;
     }
 
     public function manageSettingsPage(bool $condition = true): static
     {
         $this->hasManageSettingsPage = $condition;
+
         return $this;
     }
-    
+
     public function hideSettingResourceInProduction(bool $condition = true): static
     {
         $this->hideSettingResourceInProduction = $condition;
+
         return $this;
     }
-    
+
     public function withCustomGroups(array $groups): static
     {
         $this->customGroups = $groups;
+
         return $this;
     }
 }
